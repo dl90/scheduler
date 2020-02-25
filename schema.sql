@@ -25,49 +25,62 @@ DROP TABLE IF EXISTS User;
 
 
 CREATE TABLE User (
-  `id` int PRIMARY KEY AUTO_INCREMENT,
-  `username` varchar(255) UNIQUE NOT NULL,
-  `password` varchar(255) NOT NULL,
-  `creation_time` timestamp NOT NULL,
-  `contact_list_id` int,
-  `survey_list_id` int
+  id                      INTEGER PRIMARY KEY AUTO_INCREMENT,
+  `username`              VARCHAR(255) UNIQUE NOT NULL,
+  `password`              VARCHAR(255) NOT NULL,
+  `creation_time`         TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE ScheduledMeetings (
-  `id` int PRIMARY KEY AUTO_INCREMENT,
-  `meetingDate` date,
-  `meetingTime` time,
-  `number_of_people` int
+  `id`                INTEGER PRIMARY KEY AUTO_INCREMENT,
+  `user_id`           INTEGER,
+  `meetingDate`       DATE,
+  `meetingTime`       TIME,
+  `number_of_people`  INTEGER
 );
 
 CREATE TABLE Meeting (
-  `id` int PRIMARY KEY AUTO_INCREMENT,
-  `user_id` int,
-  `scheduledMeeting_id` int
+  `user_id`               INTEGER NOT NULL,
+  `scheduled_meeting_id`  INTEGER NOT NULL,
+
+  CONSTRAINT Meeting_PK                   -- the name of the PK constraint
+    PRIMARY KEY (user_id, scheduled_meeting_id),
+
+  CONSTRAINT User_Meeting_FK             -- the name of the FK constraint
+    FOREIGN KEY (user_id) 
+    REFERENCES User (id)
+      ON UPDATE CASCADE                  -- the actions of the FK
+      ON DELETE CASCADE,
+
+  CONSTRAINT Scheduled_Meeting_FK        -- second FK
+    FOREIGN KEY (scheduled_meeting_id) 
+    REFERENCES ScheduledMeetings (id)
+      ON UPDATE CASCADE
+      ON DELETE RESTRICT
 );
 
 CREATE TABLE UserDetails (
-  `id` int PRIMARY KEY AUTO_INCREMENT,
-  `user_id` int,
+  `id`                      INTEGER PRIMARY KEY AUTO_INCREMENT,
+  `user_id`                 INTEGER,
   `user_first_name` varchar(255),
   `user_last_name` varchar(255),
   `email` varchar(255) UNIQUE NOT NULL,
-  `user_credit_card_number` int,
-  `user_subscription_tir` int
+  `user_credit_card_number` INTEGER,
+  `user_subscription_tir`   INTEGER
 );
 
 CREATE TABLE UserAuthentication (
-  `id` int PRIMARY KEY AUTO_INCREMENT,
-  `timestamp` timestamp,
-  `user_id` int,
-  `user_session` varchar(255),
-  `user_cookie` varchar(255),
-  `authentication_history_id` int
+  `id`                            INTEGER PRIMARY KEY AUTO_INCREMENT,
+  `timestamp`                     TIMESTAMP,
+  `user_id`                       INTEGER NOT NULL,
+  `user_session`                  VARCHAR(255),
+  `user_cookie`                   VARCHAR(255)
 );
 
 CREATE TABLE UserAuthenticationHistory (
   `id` int PRIMARY KEY AUTO_INCREMENT,
-  `user_id` int,
+  `user_id`                  INTEGER NOT NULL,
+  `user_authentication_id`   INTEGER,
   `user_ip` varchar(255),
   `timestamp` timestamp
 );
@@ -83,18 +96,19 @@ CREATE TABLE Settings (
   `subscription` varchar(255)
 );
 
-CREATE TABLE ContactList (
-  `id` int PRIMARY KEY AUTO_INCREMENT,
-  `user_id` int,
-  `contact_id` int
-);
-
 CREATE TABLE Contact (
   `id` int PRIMARY KEY AUTO_INCREMENT,
   `name` varchar(255),
   `email` varchar(255),
   `note` varchar(255)
 );
+
+CREATE TABLE ContactList (
+  `id`          INTEGER PRIMARY KEY AUTO_INCREMENT,
+  `user_id`     INTEGER,
+  `contact_id`  INTEGER
+);
+
 
 CREATE TABLE SurveyList (
   `id` int PRIMARY KEY AUTO_INCREMENT,
@@ -109,29 +123,30 @@ CREATE TABLE Survey (
   `type` int,
   `location` varchar(255),
   `note` varchar(255),
-  `participant_list_id` int,
-  `question_id` varchar(255),
   `answer_id` varchar(255)
 );
 
 CREATE TABLE SurveyParticipantList (
   `id` int PRIMARY KEY AUTO_INCREMENT,
+  `user_id` INTEGER,
   `survey_id` int,
   `contact_id` int
 );
 
 CREATE TABLE SurveyQuestion (
   `id` int PRIMARY KEY AUTO_INCREMENT,
-  `creation_time` timestamp,
-  `type` int,
-  `question` varchar(255)
+  `creation_time` timestamp DEFAULT NOW(),
+  `type` VARCHAR(255),
+  `question` varchar(255),
+  survey_id INTEGER NOT NULL
 );
 
 CREATE TABLE SurveyAnswer (
   `id` int PRIMARY KEY AUTO_INCREMENT,
   `creation_time` timestamp,
   `type` int,
-  `user_id` varchar(255),
+  `user_id`             INTEGER NOT NULL,
+  `survey_question_id`    INTEGER NOT NULL,
   `answer` varchar(255)
 );
 
@@ -165,23 +180,22 @@ CREATE TABLE `Availability` (
   `booking_id` int
 );
 
+
 ALTER TABLE `Meeting` ADD FOREIGN KEY (user_id) REFERENCES `User`(id) ON DELETE CASCADE;
-ALTER TABLE `Meeting` ADD FOREIGN KEY (scheduledMeeting_id) REFERENCES `ScheduledMeetings` (id) ON DELETE CASCADE;
-ALTER TABLE `User` ADD FOREIGN KEY (id) REFERENCES `ScheduledMeetings` (id) ON DELETE CASCADE;
 ALTER TABLE `Settings` ADD FOREIGN KEY (user_id) REFERENCES `User` (id) ON DELETE CASCADE;
-ALTER TABLE `Contact` ADD FOREIGN KEY (id) REFERENCES `ContactList` (contact_id) ON DELETE CASCADE;
+ALTER TABLE `ContactList` ADD FOREIGN KEY (contact_id) REFERENCES `Contact` (id) ON DELETE SET NULL;
+ALTER TABLE `ContactList` ADD FOREIGN KEY (user_id) REFERENCES `User` (id) ON DELETE CASCADE;
+ALTER TABLE `Booking` ADD FOREIGN KEY (contact_id) REFERENCES `ContactList` (id) ON DELETE CASCADE;
+ALTER TABLE `SurveyParticipantList` ADD FOREIGN KEY (contact_id) REFERENCES `ContactList` (id) ON DELETE SET NULL;
 ALTER TABLE `SurveyList` ADD FOREIGN KEY (survey_id) REFERENCES `Survey` (id) ON DELETE CASCADE;
-ALTER TABLE `SurveyList` ADD FOREIGN KEY (id) REFERENCES `User` (survey_list_id) ON DELETE CASCADE;
-ALTER TABLE `ContactList` ADD FOREIGN KEY (user_id) REFERENCES `User` (contact_list_id) ON DELETE CASCADE;
-ALTER TABLE `SurveyQuestion` ADD FOREIGN KEY (id) REFERENCES `Survey` (question_id) ON DELETE CASCADE;
-ALTER TABLE `SurveyAnswer` ADD FOREIGN KEY (id) REFERENCES `Survey` (answer_id) ON DELETE CASCADE;
-ALTER TABLE `ContactList` ADD FOREIGN KEY (contact_id) REFERENCES `SurveyParticipantList` (contact_id) ON DELETE CASCADE;
-ALTER TABLE `User` ADD FOREIGN KEY (id) REFERENCES `UserDetails` (user_id) ON DELETE CASCADE;
-ALTER TABLE `User` ADD FOREIGN KEY (id) REFERENCES `UserAuthentication` (user_id) ON DELETE CASCADE;
-ALTER TABLE `UserAuthenticationHistory` ADD FOREIGN KEY (id) REFERENCES `UserAuthentication` (authentication_history_id) ON DELETE CASCADE;
-ALTER TABLE `Survey` ADD FOREIGN KEY (id) REFERENCES `SurveySettings` (survey_id) ON DELETE CASCADE;
-ALTER TABLE `User` ADD FOREIGN KEY (id) REFERENCES `Calendar` (user_id) ON DELETE CASCADE;
-ALTER TABLE `ContactList` ADD FOREIGN KEY (contact_id) REFERENCES `Booking` (contact_id) ON DELETE CASCADE;
-ALTER TABLE `Calendar` ADD FOREIGN KEY (availability_id) REFERENCES `Availability` (id) ON DELETE CASCADE;
-ALTER TABLE `Booking` ADD FOREIGN KEY (id) REFERENCES `Availability` (booking_id) ON DELETE CASCADE;
-ALTER TABLE `Survey` ADD FOREIGN KEY (participant_list_id) REFERENCES `SurveyParticipantList` (survey_id) ON DELETE CASCADE;
+ALTER TABLE `SurveyList` ADD FOREIGN KEY (user_id) REFERENCES `User` (id) ON DELETE CASCADE;
+ALTER TABLE `SurveyQuestion` ADD FOREIGN KEY (survey_id) REFERENCES `Survey` (id) ON DELETE CASCADE;
+ALTER TABLE `SurveyAnswer` ADD FOREIGN KEY (survey_question_id) REFERENCES `SurveyQuestion` (id) ON DELETE CASCADE;
+ALTER TABLE `UserDetails` ADD FOREIGN KEY (user_id) REFERENCES `User` (id) ON DELETE CASCADE;
+ALTER TABLE `UserAuthentication` ADD FOREIGN KEY (user_id) REFERENCES `User`(id) ON DELETE CASCADE;
+ALTER TABLE `UserAuthenticationHistory` ADD FOREIGN KEY (user_authentication_id) REFERENCES `UserAuthentication` (id) ON DELETE SET NULL;
+ALTER TABLE `SurveySettings` ADD FOREIGN KEY (survey_id) REFERENCES `Survey` (id) ON DELETE CASCADE;
+ALTER TABLE `Calendar` ADD FOREIGN KEY (user_id) REFERENCES `User` (id) ON DELETE CASCADE;
+ALTER TABLE `Calendar` ADD FOREIGN KEY (availability_id) REFERENCES `Availability` (id) ON DELETE SET NULL;
+ALTER TABLE `Availability` ADD FOREIGN KEY (booking_id) REFERENCES `Booking` (id) ON DELETE CASCADE;
+ALTER TABLE `SurveyParticipantList` ADD FOREIGN KEY (survey_id) REFERENCES `Survey` (id) ON DELETE CASCADE;
