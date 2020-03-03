@@ -1,0 +1,30 @@
+{
+  "name": "team-3",
+  "version": "1.0.0",
+  "description": "Doodle Clone (polling app)",
+  "main": "index.js",
+  "dependencies": {
+    "ejs": "^3.0.1",
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "@testing-library/dom": "^6.12.2",
+    "jest": "^25.1.0",
+    "jsdom": "^16.2.0",
+    "supertest": "^4.0.2"
+  },
+  "scripts": {
+    "test": "npx jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sam-meech-ward-bcit/project-team-3.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sam-meech-ward-bcit/project-team-3/issues"
+  },
+  "homepage": "https://github.com/sam-meech-ward-bcit/project-team-3#readme"
+}

@@ -69,13 +69,13 @@ CREATE TABLE UserDetails (
   `user_subscription_tir`   INTEGER
 );
 
-CREATE TABLE UserAuthentication (
-  `id`                            INTEGER PRIMARY KEY AUTO_INCREMENT,
-  `timestamp`                     TIMESTAMP,
-  `user_id`                       INTEGER NOT NULL,
-  `user_session`                  VARCHAR(255),
-  `user_cookie`                   VARCHAR(255)
-);
+-- CREATE TABLE UserAuthentication (
+--   `id`                            INTEGER PRIMARY KEY AUTO_INCREMENT,
+--   `timestamp`                     TIMESTAMP,
+--   `user_id`                       INTEGER NOT NULL,
+--   `user_session`                  VARCHAR(255),
+--   `user_cookie`                   VARCHAR(255)
+-- );
 
 CREATE TABLE UserAuthenticationHistory (
   `id` int PRIMARY KEY AUTO_INCREMENT,
