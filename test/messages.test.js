@@ -19,8 +19,8 @@ describe('/api/messages', () => {
   })
 
   describe('error', () => {
-    database.shouldFail = true
     test('should respond with 500 error', (done) => {
+      database.shouldFail = true
       request(app).get('/api/messages').then((response) => {
         expect(response.statusCode).toBe(500)
         done()
@@ -37,10 +37,12 @@ describe('/messages', () => {
           
           // 2
           const fakeDom = new JSDOM(response.text)
-          const body = fakeDom.window.document.body
+          const document = fakeDom.window.document
 
           database.messages.forEach(message => {
-            const htmlMessages = queryByText(document.body, message.content) // 3
+            console.log(message.content)
+            // new RegExp(`.*${message.content}.*`
+            const htmlMessages = queryByText(document.body, new RegExp(`.*${message.content}.*`)) // 3
             expect(htmlMessages).toBeTruthy() 
           })
 

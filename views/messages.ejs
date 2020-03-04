@@ -16,6 +16,26 @@
       <% } %>
     <% } %>
   <% } %>
+
+
+  <ul class="channels"></ul>
+
+  <!-- <script>
+    // periodically checks for updates
+    setInterval(() => {
+      $.get('/change?')
+    }, 1000);
+
+    //on event
+    $.ajax({
+      method: 'GET',
+      url: '/api/v1/channels'
+    }).done(channels => {
+      channels.forEach(channel => {
+        $(`<li>Channel Name: ${channel.name}</li>`).appendTo("#channels")
+      })
+    })
+  </script> -->
 </body>
 
 </html>
