@@ -1,8 +1,12 @@
 
-// const message = require('./database');
-const message = require('./test/testDatabase');
-const app = require('./app')(message);
+const database = require('./mysqlDatabase');
 const PORT = 9999;
 
+database.connect((err) => {
+  if (err) {
+    throw err;
+  }
 
-app.listen(PORT, () => console.log(`Running on : http://localhost:${PORT}`))
+  const app = require('./app')(database);
+  app.listen(PORT, () => console.log(`Running on : http://localhost:${PORT}`))
+})

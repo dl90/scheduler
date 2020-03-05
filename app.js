@@ -3,42 +3,36 @@ const app = express();
 
 module.exports = function (db) {
 
-  app.use(express.json()) // for parsing application/json
-  app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
+  app.use(express.json())
+  app.use(express.urlencoded({ extended: true }))
   app.set('view engine', 'ejs')
 
   app.get('/', (req, res) => {
-    // db.getMessages(function (x, message) {
-    //   res.status(200).send(message);
-    // });
-    res.status(200).send("Homepage")
+    res.status(200).render("homepage")
   });
 
-  app.get('/api/messages', (req, res) => {
-    // db.getMessages(console.log)
-    db.getMessages(function (err, message) {
+  // for testing
+  const user = "Test1"
+
+  app.get('/api/v1/meetings', (req, res) => {
+    db.getMeetings((err, meetings) => {
       if (err) {
         res.sendStatus(500);
       } else {
-        res.status(200).json(message);
+        res.send(meetings);
       }
-    })
+    }, user) // hard-coded user for now
   })
 
-  app.get('/messages', (req, res) => {
-    db.getMessages((err, messages) => {
-      if (err) {
-        // Handle the error case, maybe use an error.ejs file or something
-        res.render('error');
-        return
+  app.get('/api/v1/user', (req, res) => {
+    db.getUserInfo((err, info) => {
+      if(err) {
+        res.sendStatus(500);
+      } else {
+        res.send(info);
       }
-      res.render('messages', { messages });
-    })
+    }, user) // hard-coded user for now
   })
-
-  app.get('/test', (req, res) => {
-    res.status(200).send("TEST OK");
-  });
 
   return app
 }
