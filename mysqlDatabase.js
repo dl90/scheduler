@@ -12,18 +12,37 @@ const conn = mysql.createConnection({
 function connect (callback) {
   conn.connect(function (err) {
     callback(err)
+    console.log("Connected to DB");
   });
 };
 
-// get meeting with name
-function getMeetings(callback, name) {
-  conn.query(`
-  SELECT detail FROM meetings
-  JOIN users
-  ON meetings.user_id = users.id
-  WHERE users.username = "${name}"
-  `, callback)
+// ---------------------------------- //
+
+// get username
+function getUser(callback, username) {
+  const query = "SELECT `username` FROM `users` WHERE `username` = ?";
+  conn.query(query, [username], callback);
+}
+
+// get password
+function getPassword(callback, username) {
+  const query = "SELECT `password` FROM `users` WHERE `username` = ?";
+  conn.query(query, [username], callback);
+}
+
+// create new user
+function createUser(callback, username, password, email) {
+  const query = "INSERT INTO `users` (`username`, `password`, `email`) VALUES ( ?, ?, ?)";
+  conn.query(query, [username, password, email], callback);
+}
+
+// get meeting with username
+function getMeetings(callback, username) {
+  const query = "SELECT `detail`, `start_time`, `end_time` FROM `meetings` JOIN `users` ON meetings.user_id = users.id WHERE users.username = ?";
+  conn.query(query, [username], callback);
 };
+
+
 
 // meeting_obj = {
 //   user_id: 1,
@@ -47,5 +66,4 @@ function getUserInfo(callback, name) {
   `, callback);
 };
 
-// exports.getMeetings = getMeetings;
-module.exports = { connect, getMeetings, getUserInfo, addMeeting }
+module.exports = { connect, getUser, getPassword, createUser, getMeetings, getUserInfo, addMeeting }

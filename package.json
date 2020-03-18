@@ -4,17 +4,16 @@
   "description": "Doodle Clone (polling app)",
   "main": "index.js",
   "dependencies": {
+    "bcrypt": "^4.0.1",
     "ejs": "^3.0.1",
     "express": "^4.17.1",
-    "jest": "^25.1.0",
-    "knex": "^0.20.10",
-    "mysql": "^2.18.1",
-    "supertest": "^4.0.2"
+    "mysql": "^2.18.1"
   },
   "devDependencies": {
     "@testing-library/dom": "^6.12.2",
     "jest": "^25.1.0",
-    "jsdom": "^16.2.0",
+    "jsdom": "^16.2.1",
+    "knex": "^0.20.10",
     "supertest": "^4.0.2"
   },
   "scripts": {

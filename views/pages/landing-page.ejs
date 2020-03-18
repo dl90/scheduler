@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Landing Page</title>
+</head>
+
+<body>
+  This is the landing page
+  <div> Login
+    <form id="login-form" method="post" action="/login">
+      <label for="username">Username : </label>
+      <input class="" type="text" id="username" name="username" placeholder="Username" form="login-form">
+      <label for="password">Password: </label>
+      <input class="" type="password" id="password" name="password" placeholder="Password" form="login-form">
+      <button type="submit" id="submit" form="login-form">Login</button>
+    </form>
+  </div>
+
+  <div> Sign-up
+    <form id="sign-up-form" method="post" action="/sign-up">
+      <label for="new_username">Username : </label>
+      <input class="" type="text" id="new_username" name="new_username" placeholder="Username" form="sign-up-form">
+      <label for="new_password">Password: </label>
+      <input class="" type="password" id="new_password" name="new_password" placeholder="Password" form="sign-up-form">
+      <label for="new_email">Email : </label>
+      <input class="" type="text" id="new_email" name="new_email" placeholder="Email" form="sign-up-form">
+      <button type="submit" id="submit" form="sign-up-form">Sign-up</button>
+    </form>
+  </div>
+</body>
+
+</html>
