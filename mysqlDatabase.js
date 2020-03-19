@@ -11,8 +11,11 @@ const conn = mysql.createConnection({
 // establish connection
 function connect (callback) {
   conn.connect(function (err) {
-    callback(err)
-    console.log("Connected to DB");
+    if (err) {
+      callback(err)
+    } else {
+      console.log("Connected to DB");
+    }
   });
 };
 
