@@ -1,72 +1,78 @@
-const mysql = require("mysql")
+require('dotenv').config();
+const mysql = require('mysql')
 
 // db creds
 const conn = mysql.createConnection({
-  host: "192.168.55.10",
-  user: "root",
-  password: "root",
-  database: "sampoll"
+  host: process.env.db_host,
+  user: process.env.db_user,
+  password: process.env.db_pw,
+  database: process.env.db_db
 });
 
 // establish connection
-function connect (callback) {
+function connect(callback) {
   conn.connect(function (err) {
     if (err) {
       callback(err)
     } else {
-      console.log("Connected to DB");
+      console.log('Connected to DB');
     }
   });
 };
 
-// ---------------------------------- //
+// ---------------------------------- // auth
 
-// get username
 function getUser(callback, username) {
-  const query = "SELECT `username` FROM `users` WHERE `username` = ?";
+  const query = 'SELECT `username` FROM `users` WHERE `username` = ?';
   conn.query(query, [username], callback);
-}
+};
 
-// get password
 function getPassword(callback, username) {
-  const query = "SELECT `password` FROM `users` WHERE `username` = ?";
+  const query = 'SELECT `password` FROM `users` WHERE `username` = ?';
   conn.query(query, [username], callback);
-}
+};
 
-// create new user
 function createUser(callback, username, password, email) {
-  const query = "INSERT INTO `users` (`username`, `password`, `email`) VALUES ( ?, ?, ?)";
-  conn.query(query, [username, password, email], callback);
-}
+  // const query = 'INSERT INTO `users` (`username`, `password`, `email`) VALUES ( ?, ?, ?)';
+  // conn.query(query, [username, password, email], callback);
 
-// get meeting with username
-function getMeetings(callback, username) {
-  const query = "SELECT `detail`, `start_time`, `end_time` FROM `meetings` JOIN `users` ON meetings.user_id = users.id WHERE users.username = ?";
+  // MySQL only
+  const user = { username, password, email };
+  const query_ = 'INSERT INTO `users` SET ?';
+  conn.query(query_, user, callback);
+};
+
+// ---------------------------------- // meeting
+
+function getMeetingsByUser(callback, username) {
+  const query = 'SELECT `detail`, `start_time`, `end_time` FROM `meetings` JOIN `users` ON meetings.user_id = users.id WHERE users.username = ?';
   conn.query(query, [username], callback);
 };
 
+function getMeetingById(callback, meeting_id) {
+  const query = 'SELECT `detail`, `start_time`, `end_time` FROM `meetings` WHERE `id` = ?';
+  conn.query(query, [meeting_id], callback);
+};
 
-
-// meeting_obj = {
-//   user_id: 1,
-//   start_time: null,
-//   end_time: null,
-//   detail: "New test meeting"
-// }
+// meeting_obj = { user_id: 1, start_time: null, end_time: null, detail: "New test meeting" }
 function addMeeting(callback, meeting_obj) {
-  conn.query(`
-  INSERT INTO meetings (user_id, start_time, end_time, detail)
-  VALUES
-  (${meeting_obj.user_id}, ${meeting_obj.start_time}, ${meeting_obj.end_time}, ${meeting_obj.detail})
-  `, callback)
+  const query = 'INSERT INTO `meetings` SET ?';
+  conn.query(query, meeting_obj, callback);
 };
 
-// get user info
-function getUserInfo(callback, name) {
-  conn.query(`
-  SELECT * FROM users
-  WHERE user.username = "${name}"
-  `, callback);
+function updateMeeting(callback, meeting_obj) {
+  if (meeting_obj.detail.trim().length > 0) {
+    const query = 'UPDATE `meetings` SET `start_time` = ?, `end_time` = ?, `detail` = ? WHERE `id` = ?';
+    conn.query(query, meeting_obj, callback);
+  };
 };
 
-module.exports = { connect, getUser, getPassword, createUser, getMeetings, getUserInfo, addMeeting }
+function deleteMeeting(callback, meeting_id) {
+  const query = 'DELETE FROM `meetings` WHERE `id` = ?';
+  conn.query(query, [meeting_id], callback);
+}
+
+// ---------------------------------- // contacts
+
+
+module.exports = { connect, getUser, getPassword, createUser, getMeetingsByUser, getMeetingById, addMeeting, updateMeeting, deleteMeeting }
