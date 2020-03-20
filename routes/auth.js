@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const bcrypt = require('bcrypt');
 const router = express.Router();
+const { generateToken } = require('../controller/jwt')
 const salt = parseInt(process.env.salt);
 
 module.exports = function (db) {
@@ -20,9 +21,12 @@ module.exports = function (db) {
           } else if (result.length === 1) {
             bcrypt.compare(password, result[0].password, function (err, result) {
               if (err) {
-                res.render('pages/error', { msg: 'Bcrypt' });
+                res.render('pages/error', { msg: 'Bcrypt error' });
               } else if (result) {
-                res.render('pages/console');
+                const token = generateToken({ username });
+                res.set({ Authorization: "Bearer " + token });
+                res.send({ msg: 'ok' })
+                // res.redirect('/secure/console');
               } else {
                 res.render('pages/error', { msg: 'Incorrect login info' });
               };
@@ -53,7 +57,7 @@ module.exports = function (db) {
               if (err) {
                 res.render('pages/error', { msg: 'Database Error' });
               } else {
-                res.send({ status: 'success' });
+                res.render('/pages/landing-page', { msg: 'User successfully created.' });
               };
               console.log('New user registered with user id: ' + result.insertId);
             }, username, hash, email);
