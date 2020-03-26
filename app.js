@@ -7,6 +7,7 @@ module.exports = function(db) {
   app.use(express.json());
   app.use(express.urlencoded({ extended: false }));
   app.use(cookieParser());
+  app.use(express.static("public"));
   app.set("view engine", "ejs");
 
   app.get("/", (req, res) => {
@@ -17,6 +18,7 @@ module.exports = function(db) {
   const auth_route = require("./routes/auth")(db);
   app.use("/auth", auth_route);
 
+  // console route
   app.get("/secure/console", tokenMiddleWare, (req, res, next) => {
     if (res.problem) {
       res.render("pages/error", { msg: res.problem });

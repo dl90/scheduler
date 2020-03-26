@@ -1,4 +1,6 @@
+require("dotenv").config();
 const { verifyToken } = require("../controller/jwt");
+const jwtCookieName = process.env.jwtCookieName;
 
 function tokenMiddleWare(req, res, next) {
   // const header = req.headers['x-access-token'] || req.headers['authorization'];
@@ -7,11 +9,11 @@ function tokenMiddleWare(req, res, next) {
   //   const bearer = header.split(' ');
   // const token = bearer[1];
 
-  const token = req.cookies.jwt;
+  const token = req.cookies[jwtCookieName];
   if (token) {
     const payload = verifyToken(token);
     if (typeof payload !== Error) {
-      req.payload = payload;
+      req.payload = payload; // payload stored on req obj
       next();
     } else {
       res.problem = "Invalid token";

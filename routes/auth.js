@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 const router = express.Router();
 const { generateToken } = require("../controller/jwt");
 const salt = parseInt(process.env.salt);
+const jwtCookieName = process.env.jwtCookieName;
 
 module.exports = function(db) {
   // login
@@ -27,7 +28,10 @@ module.exports = function(db) {
                 // res.set({ Authorization: "Bearer " + token });
                 // res.send({ msg: 'ok' })
                 return res
-                  .cookie("jwt", token, { httpOnly: false, sameSite: true })
+                  .cookie(jwtCookieName, token, {
+                    httpOnly: false,
+                    sameSite: true
+                  })
                   .redirect("/secure/console");
               } else {
                 res.render("pages/error", { msg: "Incorrect login info" });
@@ -83,9 +87,11 @@ module.exports = function(db) {
   });
 
   router.get("/logout", (req, res) => {
-    const token = req.cookies.jwt;
+    const token = req.cookies[jwtCookieName];
     if (token) {
-      res.clearCookie("jwt", { httpOnly: false, sameSite: true }).redirect("/");
+      res
+        .clearCookie(jwtCookieName, { httpOnly: false, sameSite: true })
+        .redirect("/");
     }
   });
 
