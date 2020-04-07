@@ -1,0 +1,9 @@
+body {
+  background-color: black;
+  color: white;
+  margin-top: 1em;
+}
+
+.meetings-container {
+  width: 80%;
+}

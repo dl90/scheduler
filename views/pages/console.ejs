@@ -1,13 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Console page</title>
-  </head>
-  <body>
-    This is the Console
 
-    <a href="/auth/logout">Click here to logout</a>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" href="/css/console.css">
+  <title>Console 🖥</title>
+</head>
+
+<body>
+  <div class="page-header">
+    <h1>This is the Console 🖥</h1>
+  </div>
+
+  <div class="meetings-container">
+    <input type="button" value="Load meetings" id="get-meetings">
+  </div>
+
+  <a href="/auth/logout">Click here to logout</a>
+
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script>
+    $(() => {
+
+      $("#get-meetings").on("click", function () {
+        console.log("test")
+        $.ajax({
+          url: "/api/v1/meetings",
+          type: "GET",
+          success: function (data) {
+            console.log(data)
+          }
+        });
+      });
+
+
+    })
+  </script>
+</body>
+
 </html>

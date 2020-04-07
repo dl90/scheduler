@@ -1,9 +1,19 @@
-const express = require("express");
-const router = express.Router();
+const express = require("express"),
+  router = express.Router();
 
 module.exports = function(db) {
-  // all meetings by user
+  // checks for jwt verification problems
+  const problemChecker = res => {
+    console.log("problemcheck:  ", res.problem);
+    if (res.problem) {
+      res.render("pages/error", { msg: res.problem });
+      return;
+    }
+  };
+
+  // get all meetings by user
   router.get("/meetings", (req, res, next) => {
+    problemChecker(res);
     const user = req.payload.username; // username from jwt
     db.getMeetingsByUser((err, meetings) => {
       if (err) {
@@ -11,22 +21,22 @@ module.exports = function(db) {
       } else {
         res.send(meetings);
       }
-    }, user); // hard-coded user for now
+    }, user);
   });
 
-  // single meeting by id not used for now
-  // router.get("/meeting", (req, res) => {
-  //   console.log(req.body); // parse specific meeting id
-  //   const id = 1;
+  // single meeting by id not used for now ***
+  router.get("/meeting", (req, res) => {
+    console.log(req.body); // parse specific meeting id
+    const id = 1;
 
-  //   db.getMeetingById((err, meeting) => {
-  //     if (err) {
-  //       res.render("pages/error", { msg: "Database error" });
-  //     } else {
-  //       res.send(meeting);
-  //     }
-  //   }, id);
-  // });
+    db.getMeetingById((err, meeting) => {
+      if (err) {
+        res.render("pages/error", { msg: "Database error" });
+      } else {
+        res.send(meeting);
+      }
+    }, id);
+  });
 
   // meeting_obj = { user_id: 1, start_time: null, end_time: null, detail: "New test meeting" }
   router.post("/new_meeting", (req, res) => {

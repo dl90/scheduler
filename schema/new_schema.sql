@@ -8,7 +8,6 @@ DROP TABLE IF EXISTS contacts;
 DROP TABLE IF EXISTS meetings;
 DROP TABLE IF EXISTS users;
 
-
 CREATE TABLE users (
   id                      INTEGER PRIMARY KEY AUTO_INCREMENT,
   username                VARCHAR(255) UNIQUE NOT NULL,
@@ -40,11 +39,11 @@ CREATE TABLE contacts (
 
 INSERT INTO users (username, `password`, email)
 VALUES 
-("Test1", "TEST", "test1@test.com"),
-("Test2", "TEST", "test2@test.com"),
-("Test3", "TEST", "test3@test.com"),
-("Test4", "TEST", "test4@test.com"),
-("Test5", "TEST", "test5@test.com");
+("Test1", "$2b$10$Zp/3lYeGmGI9i7KXf6DBQubS6Y.mxMAp//lzIO/BNnIhGkjC6zdBm", "test1@test.com"),
+("Test2", "$2b$10$Zp/3lYeGmGI9i7KXf6DBQubS6Y.mxMAp//lzIO/BNnIhGkjC6zdBm", "test2@test.com"),
+("Test3", "$2b$10$Zp/3lYeGmGI9i7KXf6DBQubS6Y.mxMAp//lzIO/BNnIhGkjC6zdBm", "test3@test.com"),
+("Test4", "$2b$10$Zp/3lYeGmGI9i7KXf6DBQubS6Y.mxMAp//lzIO/BNnIhGkjC6zdBm", "test4@test.com"),
+("Test5", "$2b$10$Zp/3lYeGmGI9i7KXf6DBQubS6Y.mxMAp//lzIO/BNnIhGkjC6zdBm", "test5@test.com");
 
 INSERT INTO meetings (user_id, start_time, end_time, detail)
 VALUES 

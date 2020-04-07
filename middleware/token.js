@@ -1,6 +1,6 @@
 require("dotenv").config();
-const { verifyToken } = require("../controller/jwt");
-const jwtCookieName = process.env.jwtCookieName;
+const { verifyToken } = require("../controller/jwt"),
+  jwtCookieName = process.env.jwtCookieName;
 
 function tokenMiddleWare(req, res, next) {
   // const header = req.headers['x-access-token'] || req.headers['authorization'];
@@ -12,11 +12,21 @@ function tokenMiddleWare(req, res, next) {
   const token = req.cookies[jwtCookieName];
   if (token) {
     const payload = verifyToken(token);
-    if (typeof payload !== Error) {
+    // console.log(payload.constructor.name.includes("Error"));
+    // console.log(payload.name);
+
+    if (!payload.constructor.name.includes("Error")) {
       req.payload = payload; // payload stored on req obj
       next();
     } else {
-      res.problem = "Invalid token";
+      console.error(
+        `\n----------------------\nERROR: \nDate: ${Date.now()}, \n\nCookies: ${JSON.stringify(
+          req.cookies
+        )}, \n\nToken: ${JSON.stringify(token)}, \n\nHeaders: ${JSON.stringify(
+          req.headers
+        )}\n----------------------\n`
+      );
+      res.problem = "Invalid token"; // attaches problem to res obj
       next();
     }
   } else {
