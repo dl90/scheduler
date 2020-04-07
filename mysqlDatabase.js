@@ -65,6 +65,7 @@ function getMeetingById(callback, meeting_id) {
 // meeting_obj = { user_id: 1, start_time: null, end_time: null, detail: "New test meeting" }
 function addMeeting(callback, meeting_obj) {
   const query = "INSERT INTO `meetings` SET ?";
+  console.log(meeting_obj)
   conn.query(query, meeting_obj, callback);
 }
 
