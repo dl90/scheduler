@@ -1,17 +1,15 @@
 require("dotenv").config();
-const mysql = require("mysql");
-
-// db creds
-const conn = mysql.createConnection({
-  host: process.env.db_host,
-  user: process.env.db_user,
-  password: process.env.db_pw,
-  database: process.env.db_db
-});
+const mysql = require("mysql"),
+  conn = mysql.createConnection({
+    host: process.env.db_host,
+    user: process.env.db_user,
+    password: process.env.db_pw,
+    database: process.env.db_db
+  });
 
 // establish connection
 function connect(callback) {
-  conn.connect(function(err) {
+  conn.connect(function (err) {
     if (err) {
       callback(err);
     } else {
@@ -51,7 +49,7 @@ function createUser(callback, username, password, email) {
 
 function getMeetingsByUser(callback, username) {
   const query =
-    "SELECT `detail`, `start_time`, `end_time` FROM `meetings` JOIN `users` ON meetings.user_id = users.id WHERE users.username = ?";
+    "SELECT meetings.id, `detail`, `start_time`, `end_time` FROM `meetings` JOIN `users` ON meetings.user_id = users.id WHERE users.username = ?";
   conn.query(query, [username], callback);
 }
 
@@ -72,8 +70,8 @@ function addMeeting(callback, meeting_obj) {
 function updateMeeting(callback, meeting_obj) {
   if (meeting_obj.detail.trim().length > 0) {
     const query =
-      "UPDATE `meetings` SET `start_time` = ?, `end_time` = ?, `detail` = ? WHERE `id` = ?";
-    conn.query(query, meeting_obj, callback);
+      "UPDATE `meetings` SET ? WHERE `id` = ?";
+    conn.query(query, [meeting_obj, meeting_obj.id], callback);
   }
 }
 
@@ -83,6 +81,8 @@ function deleteMeeting(callback, meeting_id) {
 }
 
 // ---------------------------------- // contacts
+
+
 
 module.exports = {
   connect,

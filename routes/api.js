@@ -68,36 +68,54 @@ module.exports = function (db) {
             if (err) {
               res.render("pages/error", { msg: "Database error" });
             } else {
-              res.send("Meeting added" + result.insertId);
+              res.status(200).send(`id: ${result.insertId}`);
             }
           }, meeting_obj);
+        } else {
+          res.render("pages/error", { msg: "Database error" });
         }
       }
     }, username)
   });
 
   router.post("/update_meeting", (req, res) => {
-    console.log(req.body); // parse meeting_obj from req
-    const meeting_obj = {
-      id: 1, // must have
-      user_id: 1, // ensure meeting belongs to user (can fk be changed?)
-      start_time: null,
-      end_time: null,
-      details: "Test Meeting" // must have
-    };
-
-    db.updateMeeting((err, result) => {
+    problemChecker(res);
+    const username = req.payload.username;
+    db.getUserID((err, id) => {
       if (err) {
-        res.render("pages/error", { msg: "Database error" });
+        res.render("page/error", { msg: "Database error" });
       } else {
-        res.send("Updated " + result.affectedRows + " rows");
+        if (id[0].id > 0) {
+          const start_time = undefinedChecker(req.body.start_time),
+            end_time = undefinedChecker(req.body.end_time),
+            detail = undefinedChecker(req.body.detail),
+            meetingId = undefinedChecker(req.body.id),
+            meeting_obj = {
+              id: meetingId,
+              user_id: id[0].id,
+              start_time: start_time,
+              end_time: end_time,
+              detail: detail
+            };
+
+          db.updateMeeting((err, result) => {
+            if (err) {
+              res.render("pages/error", { msg: "Database error" });
+            } else {
+              res.send("updated " + result.affectedRows + " row");
+            }
+          }, meeting_obj);
+        } else {
+          res.render("pages/error", { msg: "Database error" });
+        }
       }
-    }, meeting_obj);
+    }, username)
+
+
   });
 
   router.post("/delete_meeting", (req, res) => {
-    console.log(req.body); // parse meeting_id from req
-    const id = 1;
+    const id = req.body.id;
 
     db.deleteMeeting((err, result) => {
       if (err) {

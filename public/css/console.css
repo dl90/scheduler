@@ -1,9 +1,38 @@
 body {
   background-color: black;
-  color: white;
+  color: orange;
   margin-top: 1em;
+  min-width: 500px;
 }
 
-.meetings-container {
+.page-header {
   width: 80%;
+  margin: auto;
+}
+
+.create-meeting-container {
+  margin: 3% 2%;
+}
+
+#meeting-list {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.card {
+  height: 300px;
+  width: 350px;
+  margin: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-meeting-detail {
+  overflow: scroll;
+  height: 50%;
+}
+
+.start-time-title, .end-time-title {
+  color: orange;
 }

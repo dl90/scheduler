@@ -30,9 +30,9 @@ CREATE TABLE meetings (
 CREATE TABLE contacts (
   id                      INTEGER PRIMARY KEY AUTO_INCREMENT,
   user_id                 INTEGER NOT NULL,
-  first_name              VARCHAR(255),
-  last_name               VARCHAR(255),
-  email                   VARCHAR(255),
+  first_name              VARCHAR(255) NOT NULL,
+  last_name               VARCHAR(255) NOT NULL,
+  email                   VARCHAR(255) NOT NULL,
 
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );

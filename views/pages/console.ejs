@@ -6,6 +6,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
     integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+    integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+    crossorigin="anonymous"></script>
   <link rel="stylesheet" type="text/css" href="/css/console.css">
   <title>Console 🖥</title>
 </head>
@@ -13,44 +17,210 @@
 <body>
   <div class="page-header">
     <h1>This is the Console 🖥</h1>
+    <a href="/auth/logout" class="btn btn-light float-right">Logout</a>
+  </div>
+
+
+  <h3 id="page-message"></h3>
+
+  <div class="create-meeting-container">
+    <form class="container-fluid">
+      <h3>Schedule a new meeting</h3>
+      <div class="form-group">
+        <label for="meeting-details">Meeting details</label>
+        <textarea id="meeting-details" name="detail" rows="10" class="form-control"
+          required>Input meeting details here...</textarea>
+      </div>
+      <div class="row ">
+        <div class="form-group col-sm-3">
+          <label for="start-time">Start time</label>
+          <input type="datetime-local" id="start-time" class="form-control" required>
+        </div>
+        <div class="form-group col-sm-3">
+          <label for="end-time">End time</label>
+          <input type="datetime-local" id="end-time" class="form-control" required>
+        </div>
+        <input type="submit" value="Create meetings" id="create-meeting" class="btn btn-outline-primary col-sm-1">
+      </div>
+    </form>
   </div>
 
   <div class="meetings-container">
-    <input type="button" value="Load meetings" id="get-meetings">
+    <div class="container-fluid">
+      <div id="meeting-list"></div>
+    </div>
   </div>
 
+  <!-- Modal  -->
+  <div class="modal fade" id="modify" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modify-modal-title">Modify</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
 
-  <div class="create-meeting-container">
-    <input type="button" value="create meetings" id="create-meeting">
+          <form id="modal-form" class="container-fluid">
+            <div class="form-group">
+              <label for="modify-details">Meeting details</label>
+              <textarea id="modify-details" name="detail" rows="10" class="form-control"
+                required>Input meeting details here...</textarea>
+            </div>
+            <div class="row ">
+              <div class="form-group col-sm">
+                <label for="modify-start-time">Start time</label>
+                <input type="datetime-local" id="modify-start-time" class="form-control" required>
+              </div>
+              <div class="form-group col-sm">
+                <label for="modify-end-time">End time</label>
+                <input type="datetime-local" id="modify-end-time" class="form-control" required>
+              </div>
+            </div>
+          </form>
+
+          <h3 id="modal-message"></h3>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" form="modal-form" id="modal-form-confirm">Confirm</button>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <a href="/auth/logout">Click here to logout</a>
-
-
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script>
     $(() => {
+      $('#exampleModalCenter').on('shown.bs.modal', function () {
+        $('#myInput').trigger('focus')
+      })
 
-      $("#get-meetings").on("click", function () {
-        $.ajax({
+      const meeting_list = $("#meeting-list"),
+        start_time = $("#start-time"),
+        end_time = $("#end-time"),
+        meeting_detail = $("#meeting-details");
+
+      start_time.val(new Date().toISOString().substring(0, 17) + "00")
+      end_time.val(new Date().toISOString().substring(0, 17) + "00")
+
+      async function load() {
+        meeting_list.html("");
+        await $.ajax({
           url: "/api/v1/meetings",
           type: "GET",
           success: function (data) {
-            console.log(data)
+            data.forEach(item => {
+              $(`<div class="card bg-dark text-white">
+<span class="card-id">${item.id}</span>
+<div class="card-body">
+  <div class="card-title"><span class="start-time-title">Start Time:</span> &nbsp <span class="card-start-time">${new Date(item.start_time).toISOString().substring(0, 19).split("T").join(" ")}</span></div>
+  <div class="card-title"><span class="end-time-title">End Time:</span> &nbsp&nbsp&nbsp <span class="card-end-time">${new Date(item.end_time).toISOString().substring(0, 19).split("T").join(" ")}</span></div>
+  <div class="card-text card-meeting-detail">${item.detail}</div>
+  <button class="btn btn-danger card-delete-button" value="${item.id}">Delete</button>
+  <button class="btn btn-warning card-update-button" data-toggle="modal" data-target="#modify">Update</button>
+</div>
+</div>`).appendTo(meeting_list);
+            })
           }
         });
-      });
 
-      $("#create-meeting").on("click", function () {
-        $.ajax({
-          url: "/api/v1/new_meeting",
-          type: "POST",
-          data: {
-            start_time: "2020-03-04 01:07:28", // TODO need to be exact format
-            end_time: "2020-03-04 01:07:28", // TODO backend need to check this format
-            detail: "Meeting"
-          }
+        const deleteButtons = document.querySelectorAll(".card-delete-button");
+        deleteButtons.forEach(button => {
+          button.addEventListener("click", event => {
+            event.preventDefault()
+            $.ajax({
+              url: "/api/v1/delete_meeting",
+              type: "POST",
+              data: {
+                id: button.value
+              },
+              success: (res) => {
+                $("#page-message").text("")
+                $("#page-message").text(`New meeting added ${res}`)
+                load()
+              }
+            })
+          })
         })
+
+        const updateButtons = document.querySelectorAll(".card-update-button");
+        updateButtons.forEach(button => {
+          button.addEventListener("click", event => {
+            event.preventDefault()
+            const parent_card = button.parentElement,
+              start_time = parent_card.querySelector(".card-start-time").textContent,
+              end_time = parent_card.querySelector(".card-end-time").textContent,
+              details = parent_card.querySelector(".card-meeting-detail").textContent,
+              id = parent_card.parentElement.querySelector(".card-id").textContent;
+
+            $("#modify").attr("value", id)
+            $("#modify-modal-title").text(`Meeting ID: ${id}`)
+            $("#modify-details").text(details)
+            $("#modify-start-time").val(new Date(start_time).toISOString().substring(0, 17) + "00")
+            $("#modify-end-time").val(new Date(end_time).toISOString().substring(0, 17) + "00")
+          })
+        })
+      }
+
+      load()
+      $("#create-meeting").on("click", function (e) {
+        e.preventDefault()
+        if (end_time.val() > start_time.val()) {
+          $.ajax({
+            url: "/api/v1/new_meeting",
+            type: "POST",
+            data: {
+              start_time: start_time.val().split("T").join(" "),
+              end_time: end_time.val().split("T").join(" "),
+              detail: meeting_detail.val().trim()
+            },
+            success: res => {
+              $("#page-message").text("")
+              $("#page-message").text(`New meeting added ${res}`)
+              load()
+            }
+          })
+        } else {
+          $("#page-message").text("")
+          $("#page-message").text("Please set a realistic meeting time...")
+        }
+      })
+
+      $("#modal-form-confirm").on("click", function (e) {
+        e.preventDefault()
+        const update_id = []
+        const update_end_time = $("#modify-end-time").val(),
+          update_start_time = $("#modify-start-time").val(),
+          update_detail = $("#modify-details").val().trim();
+        $("#modify").attr("value", function (i, val) {
+          update_id.push(val);
+        })
+
+        if (new Date(update_end_time) > new Date(update_start_time)) {
+          $.ajax({
+            url: "/api/v1/update_meeting",
+            type: "POST",
+            data: {
+              id: update_id[0],
+              start_time: update_start_time,
+              end_time: update_end_time,
+              detail: update_detail
+            },
+            success: res => {
+              $("#page-message").text("")
+              $("#page-message").text(`Meeting updated ${res}`)
+              $('.modal').modal('hide');
+              load()
+            }
+          })
+        } else {
+          $("#modal-message").text("")
+          $("#modal-message").text("You can't go back in time...")
+        }
+
       })
 
     })
