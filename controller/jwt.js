@@ -1,7 +1,6 @@
 require("dotenv").config();
-const jwt = require("jsonwebtoken");
-const fs = require("fs");
-const path = require("path");
+const jwt = require("jsonwebtoken"),
+  fs = require("fs");
 
 function generateToken(payload) {
   const privateKey = fs.readFileSync(__dirname + "/private.key");
@@ -25,11 +24,5 @@ function verifyToken(token) {
   }
   return payload;
 }
-
-// const payload = { username: 'test' };
-// const token = generateToken(payload);
-// console.log(token);
-// const decoded = verifyToken(token);
-// console.log(decoded);
 
 module.exports = { generateToken, verifyToken };

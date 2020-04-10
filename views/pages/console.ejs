@@ -1,25 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-    integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
-    integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
-    crossorigin="anonymous"></script>
-  <link rel="stylesheet" type="text/css" href="/css/console.css">
-  <title>Console 🖥</title>
-</head>
+<%- include("../partial/head", { title: "Console 🖥‍", styleSheetPath: "/css/console.css" }) -%>
 
 <body>
   <div class="page-header">
     <h1>This is the Console 🖥</h1>
     <a href="/auth/logout" class="btn btn-light float-right">Logout</a>
+    <a href="/secure/contacts" class="btn btn-info float-right">Contacts</a>
   </div>
-
 
   <h3 id="page-message"></h3>
 
@@ -94,7 +80,7 @@
 
   <script>
     $(() => {
-      $('#exampleModalCenter').on('shown.bs.modal', function () {
+      $('#modify').on('shown.bs.modal', () => {
         $('#myInput').trigger('focus')
       })
 
@@ -116,11 +102,11 @@
               $(`<div class="card bg-dark text-white">
 <span class="card-id">${item.id}</span>
 <div class="card-body">
-  <div class="card-title"><span class="start-time-title">Start Time:</span> &nbsp <span class="card-start-time">${new Date(item.start_time).toISOString().substring(0, 19).split("T").join(" ")}</span></div>
-  <div class="card-title"><span class="end-time-title">End Time:</span> &nbsp&nbsp&nbsp <span class="card-end-time">${new Date(item.end_time).toISOString().substring(0, 19).split("T").join(" ")}</span></div>
-  <div class="card-text card-meeting-detail">${item.detail}</div>
-  <button class="btn btn-danger card-delete-button" value="${item.id}">Delete</button>
-  <button class="btn btn-warning card-update-button" data-toggle="modal" data-target="#modify">Update</button>
+<div class="card-title"><span class="start-time-title">Start Time:</span> &nbsp <span class="card-start-time">${new Date(item.start_time).toISOString().substring(0, 19).split("T").join(" ")}</span></div>
+<div class="card-title"><span class="end-time-title">End Time:</span> &nbsp&nbsp&nbsp <span class="card-end-time">${new Date(item.end_time).toISOString().substring(0, 19).split("T").join(" ")}</span></div>
+<div class="card-text card-meeting-detail">${item.detail}</div>
+<button class="btn btn-warning card-update-button" data-toggle="modal" data-target="#modify">Update</button>
+<button class="btn btn-danger card-delete-button" value="${item.id}">Delete</button>
 </div>
 </div>`).appendTo(meeting_list);
             })
@@ -189,7 +175,7 @@
         }
       })
 
-      $("#modal-form-confirm").on("click", function (e) {
+      $("#modal-form-confirm").on("click", e => {
         e.preventDefault()
         const update_id = []
         const update_end_time = $("#modify-end-time").val(),

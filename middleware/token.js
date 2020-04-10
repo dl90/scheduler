@@ -33,7 +33,6 @@ function tokenMiddleWare(req, res, next) {
     res.problem = "No auth token supplied";
     next();
   }
-  // }
 }
 
 module.exports = { tokenMiddleWare };

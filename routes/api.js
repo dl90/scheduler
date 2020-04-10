@@ -24,21 +24,20 @@ module.exports = function (db) {
     const user = req.payload.username; // username from jwt
     db.getMeetingsByUser((err, meetings) => {
       if (err) {
-        res.render("pages/error", { msg: "Database error" });
+        res.sendStatus(500);
       } else {
         res.send(meetings);
       }
     }, user);
   });
 
-  // single meeting by id not used for now ***
+  // single meeting by id not used for now *** TODO change
   router.get("/meeting", (req, res) => {
-    console.log(req.body); // parse specific meeting id
     const id = 1;
 
     db.getMeetingById((err, meeting) => {
       if (err) {
-        res.render("pages/error", { msg: "Database error" });
+        res.sendStatus(500);
       } else {
         res.send(meeting);
       }
@@ -51,7 +50,7 @@ module.exports = function (db) {
     const username = req.payload.username;
     db.getUserID((err, id) => {
       if (err) {
-        res.render("pages/error", { msg: "Database error" });
+        res.sendStatus(500);
       } else {
         if (id[0].id > 0) {
           const start_time = undefinedChecker(req.body.start_time),
@@ -66,7 +65,7 @@ module.exports = function (db) {
 
           db.addMeeting((err, result) => {
             if (err) {
-              res.render("pages/error", { msg: "Database error" });
+              res.sendStatus(500);
             } else {
               res.status(200).send(`id: ${result.insertId}`);
             }
@@ -83,7 +82,7 @@ module.exports = function (db) {
     const username = req.payload.username;
     db.getUserID((err, id) => {
       if (err) {
-        res.render("page/error", { msg: "Database error" });
+        res.sendStatus(500);
       } else {
         if (id[0].id > 0) {
           const start_time = undefinedChecker(req.body.start_time),
@@ -100,7 +99,7 @@ module.exports = function (db) {
 
           db.updateMeeting((err, result) => {
             if (err) {
-              res.render("pages/error", { msg: "Database error" });
+              res.sendStatus(500);
             } else {
               res.send("updated " + result.affectedRows + " row");
             }
@@ -115,16 +114,79 @@ module.exports = function (db) {
   });
 
   router.post("/delete_meeting", (req, res) => {
+    problemChecker(res);
     const id = req.body.id;
-
     db.deleteMeeting((err, result) => {
       if (err) {
-        res.render("pages/error", { msg: "Database error" });
+        res.sendStatus(500);
       } else {
         res.send("Deleted " + result.affectedRows + " rows");
       }
     }, id);
   });
+
+  router.get("/get_contacts", (req, res) => {
+    problemChecker(res);
+    const username = req.payload.username;
+    db.getContactsByUsername((err, contacts) => {
+      if (err) {
+        res.sendStatus(500);
+      } else {
+        res.send(contacts);
+      }
+    }, username)
+  })
+
+  router.post("/new_contact", (req, res) => {
+    problemChecker(res);
+    const username = req.payload.username;
+
+    db.getUserID((err, id) => {
+      if (err) {
+        res.sendStatus(500);
+      } else {
+        if (id[0].id > 0) {
+          const { first_name, last_name, email } = req.body
+          db.createContact((err, result) => {
+            if (err) {
+              res.sendStatus(500);
+            } else {
+              res.sendStatus(200);
+            }
+          }, id[0].id, first_name, last_name, email)
+        }
+      }
+    }, username)
+  });
+
+  router.post("/update_contact", (req, res) => {
+    problemChecker(res);
+    const { id, first_name, last_name, email } = req.body
+    const contact = {
+      first_name,
+      last_name,
+      email
+    }
+    db.updateContactById((err, r) => {
+      if (err) {
+        res.sendStatus(500);
+      } else {
+        res.sendStatus(200);
+      }
+    }, contact, id)
+  })
+
+  router.post("/delete_contact", (req, res) => {
+    problemChecker(res);
+    const id = req.body.id;
+    db.deleteContactByID((err, r) => {
+      if (err) {
+        res.sendStatus(500);
+      } else {
+        res.sendStatus(200);
+      }
+    }, id)
+  })
 
   return router;
 };

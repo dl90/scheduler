@@ -1,0 +1,238 @@
+<%- include("../partial/head", { title: "Contacts Page 🧑‍", styleSheetPath: "/css/contacts.css" }) -%>
+
+<body>
+  <div class="page-header">
+    <h1>Your Contacts Page 🧑‍💻</h1>
+    <a href="/auth/logout" class="btn btn-light float-right">Logout</a>
+    <a href="/secure/console" class="btn btn-info float-right">Console</a>
+    <button class="btn btn-primary float-right" data-toggle="modal" data-target="#add-contact">Add Contact</button>
+  </div>
+
+  <h3 id="page-message"></h3>
+
+  <div class="contacts-container container-fluid">
+    <ul id="contact-list"></ul>
+  </div>
+
+  <!-- Modal  -->
+  <div class="modal fade" id="add-contact" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modify-modal-title">Add new contact</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+
+          <form id="add-contact-form" class="container-fluid">
+            <div class="form-group">
+              <label for="new-contact-first-name">First Name</label>
+              <input type="text" id="new-contact-first-name" name="first_name" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label for="new-contact-last-name">Last Name</label>
+              <input type="text" id="new-contact-last-name" name="last_name" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label for="new-contact-email">Email</label>
+              <input type="text" id="new-contact-email" name="email" class="form-control" required>
+            </div>
+          </form>
+
+          <h3 id="add-modal-message"></h3>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" form="add-contact-form"
+            id="add-contact-confirm">Confirm</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal  -->
+  <div class="modal fade" id="update-contact" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modify-modal-title">Update existing contact</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+
+          <form id="update-contact-form" class="container-fluid">
+            <div class="form-group">
+              <label for="update-contact-first-name">First Name</label>
+              <input type="text" id="update-contact-first-name" name="first_name" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label for="update-contact-last-name">Last Name</label>
+              <input type="text" id="update-contact-last-name" name="last_name" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label for="update-contact-email">Email</label>
+              <input type="text" id="update-contact-email" name="email" class="form-control" required>
+            </div>
+          </form>
+
+          <h3 id="update-modal-message"></h3>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" form="update-contact-form"
+            id="update-contact-confirm">Confirm</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    $(() => {
+      $('#modify').on('shown.bs.modal', () => {
+        $('#myInput').trigger('focus')
+      })
+
+      const contactList = $("#contact-list");
+      function loadContacts() {
+        contactList.html("");
+        $.ajax({
+          url: "/api/v1/get_contacts",
+          type: "GET",
+          success: contacts => {
+            contacts.forEach(contact => {
+              $(`<li id=${contact.id}>
+<p><span class="contact-first-name">${contact.first_name}</span> <span class="contact-last-name">${contact.last_name}</span></p>
+<p class="contact-email">${contact.email}</p>
+<button class="btn btn-warning update-contact-button" data-toggle="modal" data-target="#update-contact" value=${contact.id}>Update</button>
+<button class="btn btn-danger delete-contact-button" value=${contact.id}>Delete</button>
+</li>`).appendTo(contactList)
+            })
+          },
+          error: (x, y, z) => {
+            $("#page-message").text("");
+            $("#page-message").text(`Oops, could not load content...`);
+          },
+          complete: (xhr, status) => {
+            if (status === "success") {
+              const updateButtons = document.querySelectorAll(".update-contact-button"),
+                deleteButtons = document.querySelectorAll(".delete-contact-button");
+
+              updateButtons.forEach(button => {
+                button.addEventListener("click", event => {
+                  event.preventDefault()
+                  $("#update-modal-message").text("")
+
+                  const contact = document.getElementById(button.value),
+                    firstName = contact.querySelector(".contact-first-name").textContent,
+                    lastName = contact.querySelector(".contact-last-name").textContent,
+                    email = contact.querySelector(".contact-email").textContent
+
+                  $("#update-contact-first-name").val(firstName)
+                  $("#update-contact-last-name").val(lastName)
+                  $("#update-contact-email").val(email)
+                  $("#update-contact-confirm").attr("value", button.value)
+                })
+              })
+
+              deleteButtons.forEach(button => {
+                button.addEventListener("click", event => {
+                  event.preventDefault()
+                  $.ajax({
+                    url: "/api/v1/delete_contact",
+                    type: "POST",
+                    data: {
+                      id: button.value
+                    },
+                    success: res => {
+                      $("#page-message").text("");
+                      $("#page-message").text(`Contact deleted`);
+                      loadContacts();
+                    },
+                    error: (x, y, z) => {
+                      $("#page-message").text("");
+                      $("#page-message").text(`Something went wrong, contact not deleted`);
+                    }
+                  })
+                })
+              })
+            }
+          }
+        })
+      }
+
+      loadContacts();
+      $("#add-contact-confirm").on("click", e => {
+        e.preventDefault();
+        $.ajax({
+          url: "/api/v1/new_contact",
+          type: "POST",
+          data: {
+            first_name: $("#new-contact-first-name").val(),
+            last_name: $("#new-contact-last-name").val(),
+            email: $("#new-contact-email").val()
+          },
+          success: res => {
+            $("#page-message").text("");
+            $("#page-message").text(`New contact added ${res}`);
+            $("#add-contact").modal('hide');
+            loadContacts();
+          },
+          error: (x, y, z) => {
+            $("#add-modal-message").text("")
+            $("#add-modal-message").text("Something went wrong, contact not added.")
+          }
+        })
+      })
+
+
+      $("#update-contact-confirm").on("click", event => {
+        event.preventDefault()
+
+        $("#update-contact-confirm").attr("value", function (i, attr) {
+          const contact = document.getElementById(attr),
+            firstName = contact.querySelector(".contact-first-name").textContent,
+            lastName = contact.querySelector(".contact-last-name").textContent,
+            email = contact.querySelector(".contact-email").textContent
+
+          const newFirstName = $("#update-contact-first-name").val(),
+            newLastName = $("#update-contact-last-name").val(),
+            newEmail = $("#update-contact-email").val();
+
+          if (firstName !== newFirstName || lastName !== newLastName || email !== newEmail) {
+            $.ajax({
+              url: "/api/v1/update_contact",
+              type: "POST",
+              data: {
+                id: attr,
+                first_name: newFirstName,
+                last_name: newLastName,
+                email: newEmail
+              },
+              success: (res) => {
+                $("#page-message").text("")
+                $("#page-message").text("Contact successfully updated")
+              },
+              error: (xhr, status, error) => {
+                $("#page-message").text("")
+                $("#page-message").text("Something went wrong, update failed")
+              }
+            })
+            $("#update-contact").modal('hide');
+          } else {
+            $("#update-modal-message").text("")
+            $("#update-modal-message").text("Why update something if theres no change?")
+          }
+        })
+        loadContacts()
+      })
+
+    })
+
+  </script>
+</body>
+
+</html>

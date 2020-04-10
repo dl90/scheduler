@@ -10,5 +10,13 @@ module.exports = function (db) {
     }
   });
 
+  router.get("/contacts", (req, res) => {
+    if (res.problem) {
+      res.render("pages/error", { msg: res.problem });
+    } else {
+      res.render("pages/contacts")
+    }
+  })
+
   return router;
 }
