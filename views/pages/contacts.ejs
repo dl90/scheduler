@@ -29,15 +29,18 @@
           <form id="add-contact-form" class="container-fluid">
             <div class="form-group">
               <label for="new-contact-first-name">First Name</label>
-              <input type="text" id="new-contact-first-name" name="first_name" class="form-control" required>
+              <input type="text" id="new-contact-first-name" name="first_name" class="form-control" pattern=".{2,}"
+                required title="2 characters minimum">
             </div>
             <div class="form-group">
               <label for="new-contact-last-name">Last Name</label>
-              <input type="text" id="new-contact-last-name" name="last_name" class="form-control" required>
+              <input type="text" id="new-contact-last-name" name="last_name" class="form-control" pattern=".{2,}"
+                required title="2 characters minimum">
             </div>
             <div class="form-group">
               <label for="new-contact-email">Email</label>
-              <input type="text" id="new-contact-email" name="email" class="form-control" required>
+              <input type="text" id="new-contact-email" name="email" class="form-control"
+                pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required title="valid mail required">
             </div>
           </form>
 
@@ -45,7 +48,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary" form="add-contact-form"
+          <button type="submit" class="btn btn-primary" form="add-contact-form"
             id="add-contact-confirm">Confirm</button>
         </div>
       </div>
@@ -67,15 +70,18 @@
           <form id="update-contact-form" class="container-fluid">
             <div class="form-group">
               <label for="update-contact-first-name">First Name</label>
-              <input type="text" id="update-contact-first-name" name="first_name" class="form-control" required>
+              <input type="text" id="update-contact-first-name" name="first_name" class="form-control" pattern=".{2,}"
+                required title="2 characters minimum">
             </div>
             <div class="form-group">
               <label for="update-contact-last-name">Last Name</label>
-              <input type="text" id="update-contact-last-name" name="last_name" class="form-control" required>
+              <input type="text" id="update-contact-last-name" name="last_name" class="form-control" pattern=".{2,}"
+                required title="2 characters minimum">
             </div>
             <div class="form-group">
               <label for="update-contact-email">Email</label>
-              <input type="text" id="update-contact-email" name="email" class="form-control" required>
+              <input type="text" id="update-contact-email" name="email" class="form-control"
+                pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required title="valid email">
             </div>
           </form>
 
@@ -83,7 +89,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary" form="update-contact-form"
+          <button type="submit" class="btn btn-primary" form="update-contact-form"
             id="update-contact-confirm">Confirm</button>
         </div>
       </div>
@@ -165,7 +171,7 @@
       }
 
       loadContacts();
-      $("#add-contact-confirm").on("click", e => {
+      $("#add-contact-form").on("submit", e => {
         e.preventDefault();
         $.ajax({
           url: "/api/v1/new_contact",
@@ -189,7 +195,7 @@
       })
 
 
-      $("#update-contact-confirm").on("click", event => {
+      $("#update-contact-form").on("submit", event => {
         event.preventDefault()
 
         $("#update-contact-confirm").attr("value", function (i, attr) {

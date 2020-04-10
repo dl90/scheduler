@@ -68,8 +68,8 @@ module.exports = function (db) {
                 if (err) {
                   res.render("pages/error", { msg: "Database Error" });
                 } else {
-                  res.render("/pages/landing-page", {
-                    msg: `Welcome ${username}.`
+                  res.render("pages/landing-page", {
+                    msg: `Successfully registered ${username}.`
                   });
                 }
                 console.log(
