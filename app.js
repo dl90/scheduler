@@ -3,6 +3,8 @@ const express = require("express"),
   helmet = require("helmet"),
   { tokenMiddleWare } = require("./middleware/token");
 
+// const knex = require('./db/knex.js');
+
 app = express();
 app.use(helmet());
 
