@@ -99,6 +99,10 @@
           type: "GET",
           success: function (data) {
             data.forEach(item => {
+              try {
+                const contactArr = (JSON.parse(item.contacts).contact_ids)
+                console.log(contactArr)
+              } catch (err) { }
               $(`<div class="card bg-dark text-white">
 <span class="card-id">${item.id}</span>
 <div class="card-body">

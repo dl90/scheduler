@@ -18,6 +18,7 @@ exports.up = function (knex) {
       table.dateTime("start_time").notNullable()
       table.dateTime("end_time").notNullable()
       table.text("detail")
+      table.json("contacts")
 
       table.foreign("user_id").references("users.id").onDelete("CASCADE")
     })

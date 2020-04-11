@@ -32,12 +32,12 @@
     <div class="form-group row">
       <label for="new-password" class="col-form-label col-sm-5">Password</label>
       <input class="form-control col-sm-7" type="password" id="new-password" name="new_password" placeholder="Password"
-        form="sign-up-form" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required title="valid email required">
+        form="sign-up-form" pattern=".{3,}" required title="3 characters minimum">
     </div>
     <div class="form-group row">
       <label for="new-email" class="col-form-label col-sm-5">Email</label>
       <input class="form-control col-sm-7" type="text" id="new-email" name="new_email" placeholder="Email"
-        form="sign-up-form" pattern=".{3,}" required title="3 characters minimum">
+        form="sign-up-form" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required title="valid email required">
     </div>
     <button type="submit" id="sign-up-submit" form="sign-up-form" class="btn btn-warning float-right">Sign-up</button>
   </form>

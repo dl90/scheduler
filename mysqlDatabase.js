@@ -46,7 +46,7 @@ function createUser(callback, username, password, email) {
 // ---------------------------------- // meeting
 function getMeetingsByUser(callback, username) {
   const query =
-    "SELECT meetings.id, `detail`, `start_time`, `end_time` FROM `meetings` JOIN `users` ON meetings.user_id = users.id WHERE users.username = ?";
+    "SELECT meetings.id, `detail`, `start_time`, `end_time`, `contacts` FROM `meetings` JOIN `users` ON meetings.user_id = users.id WHERE users.username = ?";
   conn.query(query, [username], callback);
 }
 

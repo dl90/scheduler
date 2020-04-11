@@ -4,24 +4,24 @@ ALTER DATABASE sampoll CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
 
 USE sampoll;
 
-DROP TABLE IF EXISTS SurveyAnswer;
-DROP TABLE IF EXISTS SurveyQuestion;
-DROP TABLE IF EXISTS SurveySettings;
-DROP TABLE IF EXISTS Survey;
-DROP TABLE IF EXISTS SurveyList;
-DROP TABLE IF EXISTS SurveyParticipantList;
-DROP TABLE IF EXISTS Contact;
-DROP TABLE IF EXISTS Booking;
-DROP TABLE IF EXISTS `Availability`;
-DROP TABLE IF EXISTS Calendar;
-DROP TABLE IF EXISTS ContactList;
-DROP TABLE IF EXISTS ScheduledMeetings;
-DROP TABLE IF EXISTS Meeting;
-DROP TABLE IF EXISTS Settings;
-DROP TABLE IF EXISTS UserDetails;
-DROP TABLE IF EXISTS UserAuthenticationHistory;
-DROP TABLE IF EXISTS UserAuthentication;
-DROP TABLE IF EXISTS User;
+-- DROP TABLE IF EXISTS SurveyAnswer;
+-- DROP TABLE IF EXISTS SurveyQuestion;
+-- DROP TABLE IF EXISTS SurveySettings;
+-- DROP TABLE IF EXISTS Survey;
+-- DROP TABLE IF EXISTS SurveyList;
+-- DROP TABLE IF EXISTS SurveyParticipantList;
+-- DROP TABLE IF EXISTS Contact;
+-- DROP TABLE IF EXISTS Booking;
+-- DROP TABLE IF EXISTS `Availability`;
+-- DROP TABLE IF EXISTS Calendar;
+-- DROP TABLE IF EXISTS ContactList;
+-- DROP TABLE IF EXISTS ScheduledMeetings;
+-- DROP TABLE IF EXISTS Meeting;
+-- DROP TABLE IF EXISTS Settings;
+-- DROP TABLE IF EXISTS UserDetails;
+-- DROP TABLE IF EXISTS UserAuthenticationHistory;
+-- DROP TABLE IF EXISTS UserAuthentication;
+-- DROP TABLE IF EXISTS User;
 
 
 CREATE TABLE User (
