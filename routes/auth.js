@@ -1,12 +1,13 @@
 require("dotenv").config();
-const express = require("express");
-const bcrypt = require("bcrypt");
-const router = express.Router();
-const { generateToken } = require("../controller/jwt");
-const salt = parseInt(process.env.salt);
+const express = require("express"),
+  bcrypt = require("bcrypt"),
+  router = express.Router(),
+  { generateToken } = require("../controller/jwt");
 
-module.exports = function(db) {
-  // login
+const salt = parseInt(process.env.salt),
+  jwtCookieName = process.env.jwtCookieName;
+
+module.exports = function (db) {
   router.post("/login", (req, res) => {
     const [username, password] = [req.body.username, req.body.password];
 
@@ -27,21 +28,23 @@ module.exports = function(db) {
                 // res.set({ Authorization: "Bearer " + token });
                 // res.send({ msg: 'ok' })
                 return res
-                  .cookie("jwt", token, { httpOnly: false, sameSite: true })
+                  .cookie(jwtCookieName, token, {
+                    httpOnly: false,
+                    sameSite: true
+                  })
                   .redirect("/secure/console");
               } else {
-                res.render("pages/error", { msg: "Incorrect login info" });
+                res.render("pages/error", { msg: "Login failed: Invalid user ID or password" });
               }
             });
           }
         }, username);
       } else {
-        res.render("pages/error", { msg: "Incorrect login info" });
+        res.render("pages/error", { msg: "Login failed: Invalid user ID or password" });
       }
     }, username);
   });
 
-  // signup
   router.post("/sign-up", (req, res) => {
     const [username, password, email] = [
       req.body.new_username,
@@ -53,19 +56,20 @@ module.exports = function(db) {
       if (err) {
         res.render("pages/error", { msg: "Database error" });
       } else if (result.length > 0) {
-        res.render("pages/error", { msg: "User already exists" });
+        console.log(result)
+        res.render("pages/error", { msg: "Account creation error" });
       } else {
         bcrypt.hash(password, salt, function(err, hash) {
           if (err) {
-            res.render("pages/error", { msg: "Bcrypt" });
+            res.render("pages/error", { msg: "Bcrypt error" });
           } else {
             db.createUser(
               (err, result) => {
                 if (err) {
                   res.render("pages/error", { msg: "Database Error" });
                 } else {
-                  res.render("/pages/landing-page", {
-                    msg: "User successfully created."
+                  res.render("pages/landing-page", {
+                    msg: `Successfully registered ${username}.`
                   });
                 }
                 console.log(
@@ -83,9 +87,11 @@ module.exports = function(db) {
   });
 
   router.get("/logout", (req, res) => {
-    const token = req.cookies.jwt;
+    const token = req.cookies[jwtCookieName];
     if (token) {
-      res.clearCookie("jwt", { httpOnly: false, sameSite: true }).redirect("/");
+      res
+        .clearCookie(jwtCookieName, { httpOnly: false, sameSite: true })
+        .redirect("/");
     }
   });
 

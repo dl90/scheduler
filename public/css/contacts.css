@@ -1,0 +1,11 @@
+body {
+  background-color: black;
+  color: orange;
+  margin-top: 1em;
+  min-width: 500px;
+}
+
+.page-header {
+  width: 80%;
+  margin: auto;
+}

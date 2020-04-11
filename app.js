@@ -1,14 +1,21 @@
-const express = require("express");
-const cookieParser = require("cookie-parser");
-const { tokenMiddleWare } = require("./middleware/token");
-const app = express();
+const express = require("express"),
+  cookieParser = require("cookie-parser"),
+  helmet = require("helmet"),
+  { tokenMiddleWare } = require("./middleware/token");
+
+// const knex = require('./db/knex.js');
+
+app = express();
+app.use(helmet());
 
 module.exports = function(db) {
   app.use(express.json());
   app.use(express.urlencoded({ extended: false }));
   app.use(cookieParser());
+  app.use(express.static("public"));
   app.set("view engine", "ejs");
 
+  // landing page
   app.get("/", (req, res) => {
     res.render("pages/landing-page", { msg: "Welcome stranger" });
   });
@@ -17,13 +24,9 @@ module.exports = function(db) {
   const auth_route = require("./routes/auth")(db);
   app.use("/auth", auth_route);
 
-  app.get("/secure/console", tokenMiddleWare, (req, res, next) => {
-    if (res.problem) {
-      res.render("pages/error", { msg: res.problem });
-    } else {
-      res.render("pages/console");
-    }
-  });
+  // console route
+  const secure_route = require("./routes/secure")(db);
+  app.use("/secure", tokenMiddleWare, secure_route);
 
   // api message route
   const api_route = require("./routes/api")(db);

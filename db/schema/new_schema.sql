@@ -4,10 +4,9 @@ ALTER DATABASE sampoll CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
 
 USE sampoll;
 
-DROP TABLE IF EXISTS contacts;
-DROP TABLE IF EXISTS meetings;
-DROP TABLE IF EXISTS users;
-
+-- DROP TABLE IF EXISTS contacts;
+-- DROP TABLE IF EXISTS meetings;
+-- DROP TABLE IF EXISTS users;
 
 CREATE TABLE users (
   id                      INTEGER PRIMARY KEY AUTO_INCREMENT,
@@ -24,6 +23,7 @@ CREATE TABLE meetings (
   start_time              DATETIME NOT NULL,
   end_time                DATETIME NOT NULL,
   detail                  TEXT,
+  contacts                JSON,
 
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
@@ -31,28 +31,28 @@ CREATE TABLE meetings (
 CREATE TABLE contacts (
   id                      INTEGER PRIMARY KEY AUTO_INCREMENT,
   user_id                 INTEGER NOT NULL,
-  first_name              VARCHAR(255),
-  last_name               VARCHAR(255),
-  email                   VARCHAR(255),
+  first_name              VARCHAR(255) NOT NULL,
+  last_name               VARCHAR(255) NOT NULL,
+  email                   VARCHAR(255) NOT NULL,
 
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 INSERT INTO users (username, `password`, email)
 VALUES 
-("Test1", "TEST", "test1@test.com"),
-("Test2", "TEST", "test2@test.com"),
-("Test3", "TEST", "test3@test.com"),
-("Test4", "TEST", "test4@test.com"),
-("Test5", "TEST", "test5@test.com");
+("test1", "$2b$10$Zp/3lYeGmGI9i7KXf6DBQubS6Y.mxMAp//lzIO/BNnIhGkjC6zdBm", "test1@test.com"),
+("test2", "$2b$10$Zp/3lYeGmGI9i7KXf6DBQubS6Y.mxMAp//lzIO/BNnIhGkjC6zdBm", "test2@test.com"),
+("test3", "$2b$10$Zp/3lYeGmGI9i7KXf6DBQubS6Y.mxMAp//lzIO/BNnIhGkjC6zdBm", "test3@test.com"),
+("test4", "$2b$10$Zp/3lYeGmGI9i7KXf6DBQubS6Y.mxMAp//lzIO/BNnIhGkjC6zdBm", "test4@test.com"),
+("test5", "$2b$10$Zp/3lYeGmGI9i7KXf6DBQubS6Y.mxMAp//lzIO/BNnIhGkjC6zdBm", "test5@test.com");
 
-INSERT INTO meetings (user_id, start_time, end_time, detail)
+INSERT INTO meetings (user_id, start_time, end_time, detail, `contacts`)
 VALUES 
-(1, NOW(), NOW(), "NOTHING TO NOTE"),
-(1, NOW(), NOW(), "NOTHING TO NOTE"),
-(3, NOW(), NOW(), "NOTHING TO NOTE"),
-(4, NOW(), NOW(), "NOTHING TO NOTE"),
-(5, NOW(), NOW(), "NOTHING TO NOTE");
+(1, NOW(), NOW(), "NOTHING TO NOTE", '{ "contact_ids": [1, 2] }'),
+(1, NOW(), NOW(), "NOTHING TO NOTE", '{ "contact_ids": [] }'),
+(3, NOW(), NOW(), "NOTHING TO NOTE", '{ "contact_ids": [3] }'),
+(4, NOW(), NOW(), "NOTHING TO NOTE", '{ "contact_ids": [4] }'),
+(5, NOW(), NOW(), "NOTHING TO NOTE", '{ "contact_ids": [5] }');
 
 INSERT INTO contacts (user_id, first_name, last_name, email)
 VALUES

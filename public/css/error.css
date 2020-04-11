@@ -1,0 +1,28 @@
+body {
+  background-color: black;
+  color: white;
+  display: grid;
+  height: 500px;
+  margin-top: 1em;
+
+  grid-template-columns: 25% auto 25%;
+  grid-template-rows: 10% 10% 10%;
+}
+
+.page-header {
+  grid-column: 2 / span 1;
+  grid-row: row1-start / 1;
+}
+
+.page-message {
+  color: orange;
+  grid-column: 2 / span 1;
+  grid-row: row1-end / 2;
+}
+
+.back {
+  width: fit-content;
+  height: fit-content;
+  grid-column: 2 / span 1;
+  grid-row: third-line / 3;
+}
