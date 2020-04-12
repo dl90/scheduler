@@ -1,8 +1,7 @@
 
 exports.seed = function (knex) {
-  let dataArr = [];
+  const dataArr = [];
 
-  // Deletes ALL existing entries
   return knex('contacts').del()
     .then(function () {
       return knex('users').select('id')
@@ -15,7 +14,6 @@ exports.seed = function (knex) {
     .then(function () {
       const max = dataArr.length
 
-      // Inserts seed entries
       return knex('contacts').insert([
         { user_id: dataArr[0 < max ? 0 : max].id, first_name: "Sam", last_name: "M", email: "sam.m@mail.com" },
         { user_id: dataArr[0 < max ? 0 : max].id, first_name: "Sam", last_name: "e", email: "sam.e@mail.com" },

@@ -1,19 +1,16 @@
 require("dotenv").config();
 const mysql = require("mysql"),
-  conn = mysql.createConnection({
-    host: process.env.db_host,
-    user: process.env.db_user,
-    password: process.env.db_pw,
-    database: process.env.db_db
+  conn = mysql.createPool({
+    connectionLimit: process.env.DB_POOL_LIMIT,
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PW,
+    database: process.env.DB_DB
   });
 
 function connect(callback) {
-  conn.connect(function (err) {
-    if (err) {
-      callback(err);
-    } else {
-      console.log("Connected to DB");
-    }
+  conn.getConnection(function (err, connection) {
+    err ? callback(err) : console.log("Connected to DB " + connection.threadId);
   });
 }
 

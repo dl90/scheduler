@@ -38,8 +38,7 @@
   </div>
 
   <!-- Modal  -->
-  <div class="modal fade" id="modify" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
-    aria-hidden="true">
+  <div class="modal fade" id="modify" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
         <div class="modal-header">
@@ -72,7 +71,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary" form="modal-form" id="modal-form-confirm">Confirm</button>
+          <button type="submit" class="btn btn-primary" form="modal-form" id="modal-form-confirm">Confirm</button>
         </div>
       </div>
     </div>
@@ -100,8 +99,11 @@
           success: function (data) {
             data.forEach(item => {
               try {
+
+                // TODO: tie contacts with meetings
                 const contactArr = (JSON.parse(item.contacts).contact_ids)
                 console.log(contactArr)
+
               } catch (err) { }
               $(`<div class="card bg-dark text-white">
 <span class="card-id">${item.id}</span>
@@ -179,7 +181,7 @@
         }
       })
 
-      $("#modal-form-confirm").on("click", e => {
+      $("#modal-form").on("submit", e => {
         e.preventDefault()
         const update_id = []
         const update_end_time = $("#modify-end-time").val(),

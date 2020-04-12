@@ -1,13 +1,12 @@
-const dotenv = require("dotenv");
-const database = require("./mysqlDatabase");
-const result = dotenv.config();
+const dotenv = require("dotenv"),
+  database = require("./db/mysqlDatabase"),
+  result = dotenv.config();
 
 if (result.error) {
   throw result.error;
 } else {
   console.log(result.parsed);
 }
-const PORT = process.env.port;
 
 database.connect(err => {
   if (err) {
@@ -15,5 +14,6 @@ database.connect(err => {
   }
 });
 
-const app = require("./app")(database);
+const app = require("./app")(database),
+  PORT = process.env.port;
 app.listen(PORT, () => console.log(`Running on : http://localhost:${PORT}`));

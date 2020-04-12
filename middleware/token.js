@@ -4,10 +4,9 @@ const { verifyToken } = require("../controller/jwt"),
 
 function tokenMiddleWare(req, res, next) {
   // const header = req.headers['x-access-token'] || req.headers['authorization'];
-
   // if (header.startsWith('Bearer ')) {
   //   const bearer = header.split(' ');
-  // const token = bearer[1];
+  //   const token = bearer[1];
 
   const token = req.cookies[jwtCookieName];
   if (token) {
@@ -20,11 +19,12 @@ function tokenMiddleWare(req, res, next) {
       next();
     } else {
       console.error(
-        `\n----------------------\nERROR: \nDate: ${Date.now()}, \n\nCookies: ${JSON.stringify(
-          req.cookies
-        )}, \n\nToken: ${JSON.stringify(token)}, \n\nHeaders: ${JSON.stringify(
-          req.headers
-        )}\n----------------------\n`
+      `\n--------ERROR--------\n
+      \n Date:    ${Date.now()}
+      \n Cookies: ${JSON.stringify(req.cookies)}
+      \n Token:   ${JSON.stringify(token)}
+      \n Headers: ${JSON.stringify(req.headers)}
+      \n----------------------\n`
       );
       res.problem = "Invalid token"; // attaches problem to res obj
       next();
