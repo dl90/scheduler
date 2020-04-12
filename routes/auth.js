@@ -72,7 +72,7 @@ module.exports = function (db) {
                     msg: `Successfully registered ${username}.`
                   });
                 }
-                console.log(
+                console.info(
                   "New user registered with user id: " + result.insertId
                 );
               },

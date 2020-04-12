@@ -3,22 +3,20 @@ const express = require("express"),
   helmet = require("helmet"),
   { tokenMiddleWare } = require("./middleware/token");
 
-// const knex = require('./db/knex.js');
-
 app = express();
 app.use(helmet());
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.static("public"));
+app.set("view engine", "ejs");
+
+// landing page
+app.get("/", (req, res) => {
+  res.render("pages/landing-page", { msg: "Welcome stranger" });
+});
 
 module.exports = function (db) {
-  app.use(express.json());
-  app.use(express.urlencoded({ extended: false }));
-  app.use(cookieParser());
-  app.use(express.static("public"));
-  app.set("view engine", "ejs");
-
-  // landing page
-  app.get("/", (req, res) => {
-    res.render("pages/landing-page", { msg: "Welcome stranger" });
-  });
 
   // auth route
   const auth_route = require("./routes/auth")(db);

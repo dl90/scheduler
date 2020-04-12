@@ -1,5 +1,7 @@
 
 exports.up = function (knex) {
+  return null
+
   return knex.schema
     .createTable("users", (table) => {
       table.increments("id").primary()
@@ -37,6 +39,8 @@ exports.up = function (knex) {
 };
 
 exports.down = function (knex) {
+  return null
+
   return knex.schema
     .dropTable("meetings")
     .dropTable("contacts")

@@ -23,11 +23,7 @@ module.exports = function (db) {
     problemChecker(res);
     const user = req.payload.username; // username from jwt
     db.getMeetingsByUser((err, meetings) => {
-      if (err) {
-        res.sendStatus(500);
-      } else {
-        res.send(meetings);
-      }
+      err ? res.sendStatus(500) : res.send(meetings);
     }, user);
   });
 
@@ -36,11 +32,7 @@ module.exports = function (db) {
     const id = 1;
 
     db.getMeetingById((err, meeting) => {
-      if (err) {
-        res.sendStatus(500);
-      } else {
-        res.send(meeting);
-      }
+      err ? res.sendStatus(500) : res.send(meeting);
     }, id);
   });
 
@@ -64,11 +56,7 @@ module.exports = function (db) {
             };
 
           db.addMeeting((err, result) => {
-            if (err) {
-              res.sendStatus(500);
-            } else {
-              res.status(200).send(`id: ${result.insertId}`);
-            }
+            err ? res.sendStatus(500) : res.status(200).send(`id: ${result.insertId}`);
           }, meeting_obj);
         } else {
           res.render("pages/error", { msg: "Database error" });
@@ -98,30 +86,20 @@ module.exports = function (db) {
             };
 
           db.updateMeeting((err, result) => {
-            if (err) {
-              res.sendStatus(500);
-            } else {
-              res.send("updated " + result.affectedRows + " row");
-            }
+            err ? res.sendStatus(500) : res.send("updated " + result.affectedRows + " row");
           }, meeting_obj);
         } else {
           res.render("pages/error", { msg: "Database error" });
         }
       }
     }, username)
-
-
   });
 
   router.post("/delete_meeting", (req, res) => {
     problemChecker(res);
     const id = req.body.id;
     db.deleteMeeting((err, result) => {
-      if (err) {
-        res.sendStatus(500);
-      } else {
-        res.send("Deleted " + result.affectedRows + " rows");
-      }
+      err ? res.sendStatus(500) : res.send("Deleted " + result.affectedRows + " rows");
     }, id);
   });
 
@@ -129,30 +107,21 @@ module.exports = function (db) {
     problemChecker(res);
     const username = req.payload.username;
     db.getContactsByUsername((err, contacts) => {
-      if (err) {
-        res.sendStatus(500);
-      } else {
-        res.send(contacts);
-      }
+      err ? res.sendStatus(500) : res.send(contacts);
     }, username)
   })
 
   router.post("/new_contact", (req, res) => {
     problemChecker(res);
     const username = req.payload.username;
-
     db.getUserID((err, id) => {
       if (err) {
         res.sendStatus(500);
       } else {
         if (id[0].id > 0) {
           const { first_name, last_name, email } = req.body
-          db.createContact((err, result) => {
-            if (err) {
-              res.sendStatus(500);
-            } else {
-              res.sendStatus(200);
-            }
+          db.createContact((err, r) => {
+            err ? res.sendStatus(500) : res.sendStatus(200);
           }, id[0].id, first_name, last_name, email)
         }
       }
@@ -168,11 +137,7 @@ module.exports = function (db) {
       email
     }
     db.updateContactById((err, r) => {
-      if (err) {
-        res.sendStatus(500);
-      } else {
-        res.sendStatus(200);
-      }
+      err ? res.sendStatus(500) : res.sendStatus(200);
     }, contact, id)
   })
 
@@ -180,11 +145,7 @@ module.exports = function (db) {
     problemChecker(res);
     const id = req.body.id;
     db.deleteContactByID((err, r) => {
-      if (err) {
-        res.sendStatus(500);
-      } else {
-        res.sendStatus(200);
-      }
+      err ? res.sendStatus(500) : res.sendStatus(200);
     }, id)
   })
 
